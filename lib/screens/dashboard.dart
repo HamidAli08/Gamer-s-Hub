@@ -22,7 +22,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Gamer's Hub")),
+      appBar: AppBar(title: const Text("Gamer's Hub"),
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.shopping_cart),
+          onPressed: () => Navigator.pushNamed(context, '/cart'),
+        ),
+      ],
+      ),
       body: FutureBuilder<List<Product>>(
         future: productsFuture,
         builder: (context, snapshot) {
