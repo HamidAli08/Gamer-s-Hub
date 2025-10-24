@@ -20,8 +20,31 @@ class CartScreen extends StatelessWidget {
                     itemCount: cart.items.length,
                     itemBuilder: (context, index) {
                       final item = cart.items[index];
+
+                      // ✅ Handle both network and local images safely
+                      Widget imageWidget;
+                      if (item.product.image.startsWith('http')) {
+                        imageWidget = Image.network(
+                          item.product.image,
+                          width: 50,
+                          height: 50,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) =>
+                              const Icon(Icons.broken_image, color: Colors.grey),
+                        );
+                      } else {
+                        imageWidget = Image.asset(
+                          item.product.image,
+                          width: 50,
+                          height: 50,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) =>
+                              const Icon(Icons.image_not_supported, color: Colors.grey),
+                        );
+                      }
+
                       return ListTile(
-                        leading: Image.asset(item.product.image, width: 50),
+                        leading: imageWidget,
                         title: Text(item.product.name),
                         subtitle: Text('Rs: ${item.product.price} x ${item.quantity}'),
                         trailing: IconButton(
@@ -34,20 +57,25 @@ class CartScreen extends StatelessWidget {
                 ),
                 Padding(
                   padding: const EdgeInsets.all(12.0),
-                  child: Text('Total: Rs: ${cart.totalPrice.toStringAsFixed(2)}'),
+                  child: Text(
+                    'Total: Rs: ${cart.totalPrice.toStringAsFixed(2)}',
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6),
                   child: ElevatedButton(
                     onPressed: () {
-                      // Navigate to checkout or show dialog for COD form
                       showDialog(
                         context: context,
                         builder: (_) => AlertDialog(
                           title: const Text('Checkout (COD)'),
                           content: const Text('Implement checkout form here'),
                           actions: [
-                            TextButton(onPressed: () => Navigator.pop(context), child: const Text('Close'))
+                            TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: const Text('Close'),
+                            ),
                           ],
                         ),
                       );
