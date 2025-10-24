@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "672322838909",
+    "project_id": "gamer-s-hub-08",
+    "storage_bucket": "gamer-s-hub-08.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:672322838909:android:31d1454dd2d16741e22c14",
+        "android_client_info": {
+          "package_name": "com.VisualSkills.Gamershub"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA8v6Sp-PZV03Y8dgK0YJlZw-LPiH0Nq6s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:672322838909:android:753de7da823ab98de22c14",
+        "android_client_info": {
+          "package_name": "com.example.gamingstore"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA8v6Sp-PZV03Y8dgK0YJlZw-LPiH0Nq6s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
