@@ -46,7 +46,8 @@ class CartScreen extends StatelessWidget {
                       return ListTile(
                         leading: imageWidget,
                         title: Text(item.product.name),
-                        subtitle: Text('Rs: ${item.product.price} x ${item.quantity}'),
+                        subtitle:
+                            Text('Rs: ${item.product.price} x ${item.quantity}'),
                         trailing: IconButton(
                           icon: const Icon(Icons.delete),
                           onPressed: () => cart.removeFromCart(item.product.id),
@@ -59,28 +60,19 @@ class CartScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(12.0),
                   child: Text(
                     'Total: Rs: ${cart.totalPrice.toStringAsFixed(2)}',
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 18),
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 12.0, vertical: 6),
                   child: ElevatedButton(
                     onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (_) => AlertDialog(
-                          title: const Text('Checkout (COD)'),
-                          content: const Text('Implement checkout form here'),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.pop(context),
-                              child: const Text('Close'),
-                            ),
-                          ],
-                        ),
-                      );
+                      // ✅ Navigate to payment screen
+                      Navigator.pushNamed(context, '/payment');
                     },
-                    child: const Text('Checkout (Cash on Delivery)'),
+                    child: const Text('Checkout'),
                   ),
                 ),
               ],
