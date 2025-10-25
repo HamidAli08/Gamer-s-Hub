@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../services/data_service.dart';
 import '../models/product_model.dart';
@@ -28,6 +29,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
           icon: const Icon(Icons.shopping_cart),
           onPressed: () => Navigator.pushNamed(context, '/cart'),
         ),
+        IconButton(
+          icon: const Icon(Icons.logout),
+          onPressed: () async {
+            await FirebaseAuth.instance.signOut();
+            Navigator.pushReplacementNamed(context, '/login');
+          },
+),
       ],
       ),
       body: FutureBuilder<List<Product>>(
