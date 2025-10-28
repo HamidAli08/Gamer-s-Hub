@@ -11,7 +11,7 @@ class DataService {
       return snapshot.docs.map((doc) {
         final data = doc.data();
         return Product(
-          id: data['id'] ?? '',
+          id: doc.id, // ✅ Fix here
           name: data['name'] ?? '',
           description: data['description'] ?? '',
           price: (data['price'] ?? 0).toDouble(),
