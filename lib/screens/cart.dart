@@ -10,60 +10,17 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
-  String? userAddress; // stores address
-  bool addressEntered = false;
-
-  void _askForAddress(BuildContext context) {
-    final TextEditingController addressController =
-        TextEditingController(text: userAddress ?? "");
-
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: const Text('Enter Delivery Address'),
-        content: TextField(
-          controller: addressController,
-          decoration: const InputDecoration(
-            labelText: 'Complete Address',
-            hintText: 'House #, Street #, City, etc.',
-          ),
-          maxLines: 2,
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              if (addressController.text.trim().isEmpty) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Address cannot be empty')),
-                );
-                return;
-              }
-              setState(() {
-                userAddress = addressController.text.trim();
-                addressEntered = true;
-              });
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Address saved successfully!')),
-              );
-            },
-            child: const Text('Save Address'),
-          ),
-        ],
-      ),
-    );
-  }
+  String address = '';
+  bool isAddressEntered = false;
 
   @override
   Widget build(BuildContext context) {
     final cart = Provider.of<CartProvider>(context);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Cart')),
+      appBar: AppBar(
+        title: const Text('Cart'),
+      ),
       body: cart.items.isEmpty
           ? const Center(child: Text('Your cart is empty'))
           : Column(
@@ -74,12 +31,13 @@ class _CartScreenState extends State<CartScreen> {
                     itemBuilder: (context, index) {
                       final item = cart.items[index];
 
+                      // ✅ Handle network or asset image
                       Widget imageWidget;
                       if (item.product.image.startsWith('http')) {
                         imageWidget = Image.network(
                           item.product.image,
-                          width: 50,
-                          height: 50,
+                          width: 60,
+                          height: 60,
                           fit: BoxFit.cover,
                           errorBuilder: (context, error, stackTrace) =>
                               const Icon(Icons.broken_image, color: Colors.grey),
@@ -87,42 +45,49 @@ class _CartScreenState extends State<CartScreen> {
                       } else {
                         imageWidget = Image.asset(
                           item.product.image,
-                          width: 50,
-                          height: 50,
+                          width: 60,
+                          height: 60,
                           fit: BoxFit.cover,
                           errorBuilder: (context, error, stackTrace) =>
-                              const Icon(Icons.image_not_supported,
-                                  color: Colors.grey),
+                              const Icon(Icons.image_not_supported, color: Colors.grey),
                         );
                       }
 
-                      return ListTile(
-                        leading: imageWidget,
-                        title: Text(item.product.name),
-                        subtitle: Text(
-                            'Rs: ${item.product.price} x ${item.quantity}'),
-                        trailing: IconButton(
-                          icon: const Icon(Icons.delete),
-                          onPressed: () =>
-                              cart.removeFromCart(item.product.id),
+                      return Card(
+                        margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        child: ListTile(
+                          leading: imageWidget,
+                          title: Text(item.product.name),
+                          subtitle: Text('Rs: ${item.product.price} x ${item.quantity}'),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.remove_circle_outline),
+                                onPressed: () =>
+                                    cart.decreaseQuantity(item.product.id),
+                              ),
+                              Text('${item.quantity}',
+                                  style: const TextStyle(fontSize: 16)),
+                              IconButton(
+                                icon: const Icon(Icons.add_circle_outline),
+                                onPressed: () =>
+                                    cart.increaseQuantity(item.product.id),
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.delete, color: Color.fromARGB(255, 80, 0, 172)),
+                                onPressed: () =>
+                                    cart.removeFromCart(item.product.id),
+                              ),
+                            ],
+                          ),
                         ),
                       );
                     },
                   ),
                 ),
 
-                // Address info section
-                if (addressEntered)
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      "Delivery Address:\n$userAddress",
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                          fontWeight: FontWeight.w500, fontSize: 14),
-                    ),
-                  ),
-
+                // ✅ Total price section
                 Padding(
                   padding: const EdgeInsets.all(12.0),
                   child: Text(
@@ -132,29 +97,61 @@ class _CartScreenState extends State<CartScreen> {
                   ),
                 ),
 
-                // Buttons
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    // Buy Now button (address input)
-                    ElevatedButton.icon(
-                      icon: const Icon(Icons.location_on),
-                      onPressed: () => _askForAddress(context),
-                      label: const Text('Buy Now'),
+                // ✅ Address input field
+                if (isAddressEntered == true || address.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                    child: TextField(
+                      onChanged: (value) {
+                        setState(() {
+                          address = value;
+                          isAddressEntered = address.isNotEmpty;
+                        });
+                      },
+                      decoration: const InputDecoration(
+                        labelText: 'Enter your delivery address',
+                        border: OutlineInputBorder(),
+                      ),
                     ),
+                  ),
 
-                    // Checkout button (go to payment)
-                    ElevatedButton.icon(
-                      icon: const Icon(Icons.payment),
-                      onPressed: addressEntered
-                          ? () => Navigator.pushNamed(context, '/payment',
-                              arguments: userAddress)
-                          : null, // disabled if no address
-                      label: const Text('Checkout'),
-                    ),
-                  ],
+                const SizedBox(height: 10),
+
+                // ✅ Buttons (Buy Now and Checkout)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 12.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      ElevatedButton.icon(
+                        icon: const Icon(Icons.location_on),
+                        label: const Text('Buy Now'),
+                        onPressed: () {
+                          setState(() {
+                            isAddressEntered = true;
+                          });
+                        },
+                      ),
+                      ElevatedButton.icon(
+                        icon: const Icon(Icons.payment),
+                        label: const Text('Checkout'),
+                        onPressed: address.isNotEmpty
+                            ? () {
+                                // ✅ Navigate to payment screen
+                                Navigator.pushNamed(
+                                  context,
+                                  '/payment',
+                                  arguments: {
+                                    'totalPrice': cart.totalPrice,
+                                    'address': address,
+                                  },
+                                );
+                              }
+                            : null, // Disabled if no address entered
+                      ),
+                    ],
+                  ),
                 ),
-                const SizedBox(height: 12),
               ],
             ),
     );
