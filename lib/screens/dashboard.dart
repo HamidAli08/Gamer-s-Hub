@@ -23,7 +23,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Welcome to Gamer's Hub"),
+      appBar: AppBar(title: const Text("Welcome🤖"),
       actions: [
         IconButton(
           icon: const Icon(Icons.shopping_cart),
