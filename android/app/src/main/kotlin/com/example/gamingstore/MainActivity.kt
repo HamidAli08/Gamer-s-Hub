@@ -1,4 +1,4 @@
-package com.example.gamingstore
+package com.VisualSkills.Gamershub
 
 import io.flutter.embedding.android.FlutterActivity
 
