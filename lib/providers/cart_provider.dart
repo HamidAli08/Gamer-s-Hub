@@ -68,6 +68,10 @@ class CartProvider extends ChangeNotifier {
   double get totalPrice =>
       _items.fold(0, (sum, i) => sum + i.product.price * i.quantity);
 
+  /// ✅ NEW: Get total number of items (sum of all quantities)
+  int get totalItemsCount =>
+      _items.fold(0, (sum, item) => sum + item.quantity);
+
   /// Clear all items from the cart
   void clearCart() {
     _items.clear();

@@ -16,6 +16,43 @@ class ProductDetailsScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(product.name),
         actions: [
+          Consumer<CartProvider>(
+            builder: (context, cart, child) {
+              int itemCount = cart.items.fold(0, (sum, item) => sum + item.quantity);
+              return Stack(
+                alignment: Alignment.center,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.shopping_cart),
+                    onPressed: () => Navigator.pushNamed(context, '/cart'),
+                  ),
+                  if (itemCount > 0)
+                    Positioned(
+                      right: 8,
+                      top: 8,
+                      child: Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: const BoxDecoration(
+                          color: Color.fromARGB(255, 80, 0, 172),
+                          shape: BoxShape.circle,
+                        ),
+                        constraints: const BoxConstraints(minWidth: 18, minHeight: 18),
+                        child: Text(
+                          itemCount.toString(),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                ],
+              );
+            },
+          ),
+
           IconButton(
             icon: const Icon(Icons.shopping_cart),
             onPressed: () => Navigator.pushNamed(context, '/cart'),
